@@ -1,0 +1,63 @@
+# general parameters
+VOLL: 3000 # EUR / MWh
+CO2Price: 25 # EUR / ton
+nTimesteps: 24 # number of timesteps per representative day
+nReprDays: 12 # days
+discountrate: 0.05 # -
+probability: 0.1
+penalty_factor: 1.1
+threshold_factor: 0.1
+
+# Generator parameters
+dispatchableGenerators:
+ Base:
+  OC1: 5000000
+  OC2: 2300000 # EUR/MW
+  fuelCosts1: 10 # EUR/MWh
+  fuelCosts2: 36
+  emissions: 0.8 # ton/MWh
+  lifetime: 40 # years
+  legcap: 4000 # MW
+  derating: 0
+  w_factor: 1 #weighting factor between expected profits and measure of risk
+  risk-aversion: 1 #risk-aversion of the generator (0: only account for worst case, 1: neutral)
+  risk_discount: 0.05
+
+ Mid:
+  OC1: 2000000
+  OC2: 1200000 # EUR/MW
+  fuelCosts1: 50 # EUR/MWh
+  fuelCosts2 : 53
+  emissions: 0.3 # ton/MWh
+  lifetime: 25 # years
+  legcap: 4000 # MW
+  derating: 1
+  w_factor: 1
+  risk-aversion: 1
+  risk_discount: 0.05
+
+ Peak:
+  OC1: 500000
+  OC2: 700000 # EUR/MW
+  fuelCosts1: 100 # EUR/MWh
+  fuelCosts2 : 76
+  emissions: 0.5 # ton/MWh
+  lifetime: 15 # years
+  legcap: 3000 # MW
+  derating: 1
+  w_factor: 1
+  risk-aversion: 1
+  risk_discount: 0.05
+
+#variableGenerators:
+# Wind:
+#  OC: 1500000 # EUR/MW
+#  lifetime: 20 # years
+#  legcap: 4000 # MW
+#  derating: 0
+
+# Solar:
+#  OC: 1000000 # EUR/MW
+#  lifetime: 20 # years
+#  legcap: 4000 # MW
+#  derating: 0
