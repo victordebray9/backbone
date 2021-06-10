@@ -32,7 +32,7 @@ function process_time_series_data!(m::Model, data::Dict, ts::DataFrame, LOADS::D
 
     #prepare the loads with different scenarios
     m.ext[:timeseries][:SD] = [LOADS.LOAD_10_YEARS_3[jh + data["nTimesteps"]*(jd-1) + data["nReprDays"]*data["nTimesteps"]*(s-1)] for jh in JH, jd in JD, s in S]
-    
+
     return m
     #--->at this stage we have a model with an external field with the timeseries and the indices: no parameters, constraints or variables!
 end
@@ -90,7 +90,16 @@ function process_parameters!(m::Model, data::Dict, repr_days::DataFrame)
     m.ext[:ADMM][:primal_residual_e]=zeros(24,12,10) #primal residual
     m.ext[:ADMM][:dual_residual_ei]=zeros(3,24,12,10) #dual reisdual of generators
     m.ext[:ADMM][:dual_residual_ec]=zeros(24,12,10) #dual resiudal of the load
+    m.ext[:ADMM][:primal_residual_c]=zeros(10)
+    m.ext[:ADMM][:dual_residual_ci]=zeros(3,10)
+    m.ext[:ADMM][:dual_residual_cc]=zeros(10)
+    m.ext[:ADMM][:primal_residual_o]=zeros(24,12,10)
+    m.ext[:ADMM][:dual_residual_oi]=zeros(3,24,12,10)
+    m.ext[:ADMM][:dual_residual_oc]=zeros(7,24,12,10)
     m.ext[:ADMM][:generation]=zeros(3,24,12,10)
+    m.ext[:ADMM][:capacity]=zeros(3,10)
+    m.ext[:ADMM][:reserve]=zeros(3,24,12,10)
+
     # return model
     return m
 end

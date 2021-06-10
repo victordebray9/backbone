@@ -46,8 +46,8 @@ function build_greenfield_IY_GEP_model_risk!(m::Model, B, id, dict)
     xicap=m.ext[:ADMM][:xicap]
     xccap=m.ext[:ADMM][:xccap]
     pres=m.ext[:ADMM][:pres]
-    xires=m.ext[:ADMM][:xicap]
-    xcres=m.ext[:ADMM][:xccap]
+    xires=m.ext[:ADMM][:xires]
+    xcres=m.ext[:ADMM][:xcres]
 
 
 
@@ -106,7 +106,7 @@ function build_greenfield_IY_GEP_model_risk!(m::Model, B, id, dict)
         capcm = m.ext[:variables][:capcm] = @variable(m, [id=ID,s=S], lower_bound=0, base_name="cmcapacity")
         g = m.ext[:variables][:g] = @variable(m, [id=ID,jh=JH,jd=JD, s=S] , lower_bound=0, base_name="generation")
         dt = m.ext[:variables][:dt] = @variable(m, [jh=JH,jd=JD, s=S], lower_bound=0, base_name="load_real")
-        dcm = m.ext[:variables][:dcm] = @variable(m, [s=S] lower_bound=0, base_name="capacity_demand")
+        dcm = m.ext[:variables][:dcm] = @variable(m, [s=S], lower_bound=0, base_name="capacity_demand")
         a = m.ext[:variables][:a] = @variable(m, [id=ID], lower_bound=0, base_name="value at risk")
         u = m.ext[:variables][:u] = @variable(m, [id=ID, s=S], lower_bound=0, base_name="adjusted probability")
 
@@ -198,7 +198,7 @@ function build_greenfield_IY_GEP_model_risk!(m::Model, B, id, dict)
                 -sum(P[s]*W[jd]*Vr[1,j]*dr[j,jh,jd,s] for j in J, jh in JH, jd in JD, s in S)
                 +sum(P[s]*W[jd]*pres[jh,jd,s]*dr[j,jh,jd,s] for j in J, jh in JH, jd in JD, s in S)
                 + rho/2*(
-                sum(((dr[j,jh,jd,s]-(xcres[j,jh,jd,s]-1/(length(ID)+1)*(sum(xires[dict[id],jh,jd,s] for id in ID)-sum(xcres[jh,jd,s] for j in J)))))^2 for j in J, jh in JH, jd in JD, s in S)
+                sum((dr[j,jh,jd,s]-(xcres[j,jh,jd,s]-1/(length(ID)+1)*(sum(xires[dict[id],jh,jd,s] for id in ID)-sum(xcres[j,jh,jd,s] for j in J))))^2 for j in J, jh in JH, jd in JD, s in S)
                 )
             )
 
@@ -230,9 +230,10 @@ function build_greenfield_IY_GEP_model_risk!(m::Model, B, id, dict)
                 )
 
             m.ext[:constraints][:con4a] = @constraint(m, [id=ID, s=S],
-                a[id]-sum(pen[jh,jd,s]*W[jd]*g[id,jh,jd,s]-FC[id]*W[jd]*g[id,jh,jd,s] for jh in JH, jd in JD) - sum(pres[jh,jd s]*r[id,jh,jd,s] for jh in Jh, jd in JD) + IC[id]*cap[id]-u[id,s] <= 0
+                a[id]-sum(pen[jh,jd,s]*W[jd]*g[id,jh,jd,s]-FC[id]*W[jd]*g[id,jh,jd,s] for jh in JH, jd in JD) - sum(pres[jh,jd,s]*r[id,jh,jd,s] for jh in JH, jd in JD) + IC[id]*cap[id]-u[id,s] <= 0
             )
         end
+
     end
     return m
 end

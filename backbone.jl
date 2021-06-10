@@ -41,12 +41,15 @@ m_risk3 = Model(() -> Gurobi.Optimizer(GRB_ENV))
 set_optimizer_attribute(m_risk3, "OutputFlag", 0)
 m_risk4 = Model(() -> Gurobi.Optimizer(GRB_ENV))
 set_optimizer_attribute(m_risk4, "OutputFlag", 0)
+m_risk5 = Model(() -> Gurobi.Optimizer(GRB_ENV))
+set_optimizer_attribute(m_risk5, "OutputFlag", 0)
 
 MM=[m, m_risk1, m_risk2, m_risk3, m_risk4, m_risk5]
-M=[m_risk1, m_risk2, m_risk3, m_risk4, m_risk5]
+M1=[m_risk1, m_risk2, m_risk3, m_risk4]
+M2=[m_risk1, m_risk2, m_risk3, m_risk4, m_risk5]
 
 include("prepare_parameters.jl")
-
+#still to do: capacity target ofr cCM with different scenarios
 for m in MM
     define_sets!(m,data)
     process_time_series_data!(m, data, ts, LOADS)
@@ -65,10 +68,10 @@ include("update_past.jl")
 
 # recall that you can, once you've built a model, delete and overwrite constraints using the appropriate reference:
 A = "risk-averse" #neutral or risk-averse
-B ="EO" #EO, cCM or ORDC
+B ="ORDC" #EO, cCM or ORDC
 
 dict= Dict("Mid"=>1, "Base"=>2, "Peak"=>3)
-dict2=Dict(m_risk1=>"Mid", m_risk2=>"Base", m_risk3=>"Peak", m_risk4=>"Load")
+dict2=Dict(m_risk1=>"Mid", m_risk2=>"Base", m_risk3=>"Peak", m_risk4=>"Load", m_risk5=>"Operator")
 if A == "neutral"
     #build your model
     build_greenfield_IY_GEP_model!(m, B)
@@ -97,16 +100,37 @@ if A == "risk-averse"
     while true
         l=l+1
         println("loop number: ", l)
-        for m in M
-            risk_iteration!(m,B,dict2[m],dict)
+        if B=="ORDC"
+            for m in M2
+                risk_iteration!(m,B,dict2[m],dict)
+            end
+
+            for m in M2
+                update_price!(m,B,dict)
+            end
+
+            residuals= update_residuals!(B,dict)
+
+            for m in M2
+                update_past!(m,B,dict)
+            end
+
+        else
+            for m in M1
+                risk_iteration!(m,B,dict2[m],dict)
+            end
+
+            for m in M1
+                update_price!(m,B,dict)
+            end
+
+            residuals= update_residuals!(B,dict)
+
+            for m in M1
+                update_past!(m,B,dict)
+            end
         end
-        for m in M
-            update_price!(m,B,dict)
-        end
-        residuals= update_residuals!(B,dict)
-        for m in M
-            update_past!(m,B,dict)
-        end
+
         Psi=residuals[1]
         Xsi=residuals[2]
         println("Primal stopping criteria: ", Psi)
