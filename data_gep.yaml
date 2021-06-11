@@ -1,3 +1,4 @@
+#author: victordebray
 # general parameters
 VOLL: 3000 # EUR / MWh
 CO2Price: 25 # EUR / ton
