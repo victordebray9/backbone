@@ -5,11 +5,13 @@ function update_price!(m::Model, B, dict)
     JD = m.ext[:sets][:JD]
     S = m.ext[:sets][:S]
     J = m.ext[:sets][:J]
+    ID = m.ext[:sets][:ID]
     pen=m.ext[:ADMM][:pen]
     pcap=m.ext[:ADMM][:pcap]
     pres=m.ext[:ADMM][:pres]
     g=value.(m_risk4.ext[:ADMM][:generation])#values where saved in model m_risk4
     dt = value.(m_risk4.ext[:variables][:dt])
+    rho = value.(m_risk4.ext[:parameters][:rho])
 
 
     if B=="EO"

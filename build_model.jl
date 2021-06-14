@@ -20,7 +20,6 @@ function build_greenfield_IY_GEP_model!(m::Model, B)
     SD = m.ext[:timeseries][:SD]
 
     # Extract parameters
-    LC = m.ext[:parameters][:LC]
     FC = m.ext[:parameters][:FC]
     #Der = m.ext[:parameters][:Der]
     VOLL=m.ext[:parameters][:VOLL]
@@ -150,7 +149,7 @@ function build_greenfield_IY_GEP_model!(m::Model, B)
                 )
                     #reserve market clearing
             m.ext[:constraints][:con2c] = @constraint(m, [jh=JH, jd=JD],#it applies for each timelapse on each day but over sum of each power plant :)
-                sum(dr[jh,jd,j] for j in J) - sum(r[id,jh,jd] for id in ID) == 0# - ens[jh,jd] (maybe later)
+                sum(dr[j,jh,jd] for j in J) - sum(r[id,jh,jd] for id in ID) == 0# - ens[jh,jd] (maybe later)
                 )
 
 
