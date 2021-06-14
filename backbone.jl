@@ -68,7 +68,7 @@ include("update_past.jl")
 
 # recall that you can, once you've built a model, delete and overwrite constraints using the appropriate reference:
 A = "risk-averse" #neutral or risk-averse
-B ="ORDC" #EO, cCM or ORDC
+B ="EO" #EO, cCM or ORDC
 
 dict= Dict("Mid"=>1, "Base"=>2, "Peak"=>3)
 dict2=Dict(m_risk1=>"Mid", m_risk2=>"Base", m_risk3=>"Peak", m_risk4=>"Load", m_risk5=>"Operator")
@@ -91,6 +91,7 @@ if A == "neutral"
 end
 
 threshold=100
+tau = m_risk4.ext[:parameters][:tau]
 #threshold= tau*sqrt((length(ID)+1)*length(S)*length(JH)*length(JD))
 max_loop=3
 

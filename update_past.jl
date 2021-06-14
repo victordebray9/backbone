@@ -2,6 +2,7 @@ function update_past!(m::Model, B, dict)
 
     JH = m.ext[:sets][:JH]
     JD = m.ext[:sets][:JD]
+    ID = m.ext[:sets][:ID]
     S = m.ext[:sets][:S]
     J = m.ext[:sets][:J]
     g = value.(m_risk4.ext[:ADMM][:generation])
